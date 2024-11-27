@@ -26,11 +26,7 @@ const Lesson18 = () => {
 
   return (
     <div>
-      <>
-        {x && x > 5 && <span> I'm greater than 5</span>}
-        {y && x > 5 && <span> I'm greater than 5</span>}
-        {y === true && x > 5 && <span> I'm greater than 5</span>}
-      </>
+      <>{x === true && x > 5 && <span> I'm greater than 5</span>}</>
     </div>
   );
 };

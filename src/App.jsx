@@ -13,6 +13,14 @@ import Lesson9 from './lessons/Lesson9/Lesson9';
 import Lesson10 from './lessons/Lesson10/Lesson10';
 import Lesson17 from '../docs/project/chapter3/Lesson17';
 import Lesson18 from '../docs/project/chapter3/Lesson18';
+import Lesson19 from '../docs/project/chapter3/Lesson19';
+import Lesson20 from '../docs/project/chapter3/Lesson20';
+import Lesson21 from '../docs/project/chapter3/Lesson21';
+import Lesson22 from '../docs/project/chapter3/Lesson22';
+import Lesson23 from '../docs/project/chapter3/Lesson23';
+import Lesson24 from '../docs/project/chapter3/Lesson24';
+import Lesson25 from '../docs/project/chapter3/Lesson25';
+import Lesson26 from '../docs/project/chapter4/lesson26/Lesson26';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -20,7 +28,7 @@ const App = () => {
   return (
     <div className='App'>
       <NavBar />
-      <Lesson18 />
+      <Lesson26 />
       <Footer />
     </div>
   );
