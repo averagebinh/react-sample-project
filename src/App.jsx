@@ -21,6 +21,7 @@ import Lesson23 from '../docs/project/chapter3/Lesson23';
 import Lesson24 from '../docs/project/chapter3/Lesson24';
 import Lesson25 from '../docs/project/chapter3/Lesson25';
 import Lesson26 from '../docs/project/chapter4/lesson26/Lesson26';
+import Lesson27 from '../docs/project/chapter4/lesson27/Lesson27';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -28,7 +29,8 @@ const App = () => {
   return (
     <div className='App'>
       <NavBar />
-      <Lesson26 />
+
+      <Lesson27 />
       <Footer />
     </div>
   );

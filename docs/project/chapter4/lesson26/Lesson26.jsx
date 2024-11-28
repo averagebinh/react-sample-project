@@ -1,4 +1,4 @@
-import Homework26 from './Homework26_detail';
+import Homework26 from './Homework26';
 // import './Lesson26.scss'
 const Lesson26 = (props) => {
   return (
