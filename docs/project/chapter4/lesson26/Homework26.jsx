@@ -16,7 +16,7 @@ const Homework26 = (props) => {
   //   setListUsers(res.DT.users);
   // };
 
-  let { listUsers } = props;
+  const { listUsers } = props;
   console.log('>>>listUsers ', listUsers);
   return (
     <div className='list-user-container'>

@@ -15,10 +15,9 @@ const Lesson27 = (props) => {
   };
 
   const addNew = (user) => {
-    console.log('>>> check user', user);
-    setListUsers([...listUsers, user]);
+    setListUsers([user, ...listUsers]);
+    console.log('check listUSer update>>>', listUsers);
   };
-  console.log('check listUSer update>>>', listUsers);
   return (
     <div>
       <div>Lesson 27: Sharing State Between Components (Lift-up State)</div>
