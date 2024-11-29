@@ -17,7 +17,7 @@ import {
 import { toast } from 'react-toastify';
 import 'react-awesome-lightbox/build/style.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
-import { useImmer } from 'use-immer';
+
 const QuizQA = (props) => {
   const initQuestions = [
     {
@@ -35,8 +35,7 @@ const QuizQA = (props) => {
     },
   ];
 
-  //   const [questions, setQuestions] = useState(initQuestions);
-  const [questions, setQuestions] = useImmer(initQuestions);
+  const [questions, setQuestions] = useState(initQuestions);
 
   const [isPreviewImage, setIsPreviewImage] = useState(false);
   const [dataImagePreview, setDataImagePreview] = useState({
@@ -120,8 +119,9 @@ const QuizQA = (props) => {
       setQuestions([...questions, newQuestion]);
     }
     if (type === 'REMOVE') {
-      let newQuestions = questions.filter((item) => item.id !== id);
-      setQuestions(newQuestions);
+      let questionsClone = _.cloneDeep(questions);
+      questionsClone = questionsClone.filter((item) => item.id !== id);
+      setQuestions(questionsClone);
     }
   };
 
@@ -133,53 +133,54 @@ const QuizQA = (props) => {
         description: '',
         isCorrect: false,
       };
-      setQuestions((draft) => {
-        let index = draft.findIndex((item) => item.id === questionId);
-        draft[index].answers.push(newAnswer);
-        console.log('>>>check current question index :', index);
-      });
+
+      let index = questionsClone.findIndex((item) => item.id === questionId);
+      questionsClone[index].answers.push(newAnswer);
+      setQuestions(questionsClone);
     }
     if (type === 'REMOVE') {
-      setQuestions((draft) => {
-        let index = draft.findIndex((item) => item.id === questionId);
-        draft[index].answers = questions[index].answers.filter(
-          (item) => item.id !== anwserId,
-        );
-      });
+      let index = questionsClone.findIndex((item) => item.id === questionId);
+      questionsClone[index].answers = questionsClone[index].answers.filter(
+        (item) => item.id !== anwserId,
+      );
+      setQuestions(questionsClone);
     }
   };
 
   const handleOnChange = (type, questionId, value) => {
     if (type === 'QUESTION') {
-      let index = questions.findIndex((item) => item.id === questionId);
+      let questionsClone = _.cloneDeep(questions);
+
+      let index = questionsClone.findIndex((item) => item.id === questionId);
       if (index > -1) {
-        setQuestions((draft) => {
-          draft[index].description = value;
-        });
+        questionsClone[index].description = value;
+        setQuestions(questionsClone);
       }
     }
   };
 
   const handleOnChangeFileQuestion = (questionId, event) => {
-    let index = questions.findIndex((item) => item.id === questionId);
+    let questionsClone = _.cloneDeep(questions);
+
+    let index = questionsClone.findIndex((item) => item.id === questionId);
     if (
       index > -1 &&
       event.target &&
       event.target.files &&
       event.target.files[0]
     ) {
-      setQuestions((draft) => {
-        draft[index].imageFile = event.target.files[0];
-        draft[index].imageName = event.target.files[0].name;
-      });
+      questionsClone[index].imageFile = event.target.files[0];
+      questionsClone[index].imageName = event.target.files[0].name;
+      setQuestions(questionsClone);
     }
   };
 
   const handleAnswerQuestion = (type, answerId, questionId, value) => {
-    let index = questions.findIndex((item) => item.id === questionId);
+    let questionsClone = _.cloneDeep(questions);
+    let index = questionsClone.findIndex((item) => item.id === questionId);
     if (index > -1) {
-      setQuestions((draft) => {
-        draft[index].answers = draft[index].answers.map((answer) => {
+      questionsClone[index].answers = questionsClone[index].answers.map(
+        (answer) => {
           if (answer.id === answerId) {
             if (type === 'CHECKBOX') {
               answer.isCorrect = value;
@@ -189,8 +190,9 @@ const QuizQA = (props) => {
             }
           }
           return answer;
-        });
-      });
+        },
+      );
+
       setQuestions(questionsClone);
     }
   };
