@@ -24,6 +24,11 @@ import Lesson26 from '../docs/project/chapter4/lesson26/Lesson26';
 import Lesson27 from '../docs/project/chapter4/lesson27/Lesson27';
 import Lesson28 from '../docs/project/chapter4/lesson28/Lesson28';
 import Lesson29 from '../docs/project/chapter4/lesson29/Lesson29';
+import Lesson30 from '../docs/project/chapter4/lesson30/Lesson30';
+import Lesson32 from '../docs/project/chapter4/lesson32/Lesson32';
+import Lesson33 from '../docs/project/chapter4/lesson33/Lesson33';
+import Lesson331 from '../docs/project/chapter4/lesson33/Lesson331';
+import Lesson34 from '../docs/project/chapter4/lesson34/Lesson34';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -31,8 +36,8 @@ const App = () => {
   return (
     <div className='App'>
       <NavBar />
-
-      <Lesson29 />
+      <Lesson331 />
+      {/* <Lesson34 /> */}
       <Footer />
     </div>
   );
