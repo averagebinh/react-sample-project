@@ -22,6 +22,8 @@ import Lesson24 from '../docs/project/chapter3/Lesson24';
 import Lesson25 from '../docs/project/chapter3/Lesson25';
 import Lesson26 from '../docs/project/chapter4/lesson26/Lesson26';
 import Lesson27 from '../docs/project/chapter4/lesson27/Lesson27';
+import Lesson28 from '../docs/project/chapter4/lesson28/Lesson28';
+import Lesson29 from '../docs/project/chapter4/lesson29/Lesson29';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -30,7 +32,7 @@ const App = () => {
     <div className='App'>
       <NavBar />
 
-      <Lesson27 />
+      <Lesson29 />
       <Footer />
     </div>
   );
