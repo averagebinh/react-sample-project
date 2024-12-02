@@ -163,31 +163,53 @@ const QuizQA = (props) => {
       // setQuestions([...questions, newQuestion]);
     }
     if (type === 'REMOVE') {
+      if (cauHoiObj[cauhoiId]) {
+        if (
+          cauHoiObj[cauHoiObj].answers &&
+          cauHoiObj[cauHoiObj].answers.length > 0
+        ) {
+          setDapAnObj((draft) => {
+            cauHoiObj[cauHoiObj].answers.forEach((item) => {
+              delete dapAnObj[item];
+            });
+          });
+        }
+      }
       setCauHoiObj((draft) => {
         delete draft[id];
       });
     }
   };
 
-  const handleAddRemoveAnswer = (type, questionId, anwserId) => {
-    let questionsClone = _.cloneDeep(questions);
+  const handleAddRemoveAnswer = (type, questionId, answerId) => {
     if (type === 'ADD') {
+      const newAid = uuidv4();
       const newAnswer = {
-        id: uuidv4(),
+        id: newAid,
         description: '',
         isCorrect: false,
       };
-
-      let index = questionsClone.findIndex((item) => item.id === questionId);
-      questionsClone[index].answers.push(newAnswer);
-      setQuestions(questionsClone);
+      setDapAnObj((draft) => {
+        draft[newAid] = newAnswer;
+      });
+      setCauHoiObj((draft) => {
+        draft[questionId].answers.push(newAid);
+      });
     }
     if (type === 'REMOVE') {
-      let index = questionsClone.findIndex((item) => item.id === questionId);
-      questionsClone[index].answers = questionsClone[index].answers.filter(
-        (item) => item.id !== anwserId,
-      );
-      setQuestions(questionsClone);
+      if (cauHoiObj[questionId]) {
+        setCauHoiObj((draft) => {
+          let newAs = cauHoiObj[questionId].answers.filter(
+            (item) => item !== answerId,
+          );
+          draft[questionId].answers = newAs;
+        });
+      }
+      if (dapAnObj[answerId]) {
+        setDapAnObj((draft) => {
+          delete draft[answerId];
+        });
+      }
     }
   };
 
@@ -216,89 +238,23 @@ const QuizQA = (props) => {
   };
 
   const handleAnswerQuestion = (type, answerId, questionId, value) => {
-    let questionsClone = _.cloneDeep(questions);
-    let index = questionsClone.findIndex((item) => item.id === questionId);
-    if (index > -1) {
-      questionsClone[index].answers = questionsClone[index].answers.map(
-        (answer) => {
-          if (answer.id === answerId) {
-            if (type === 'CHECKBOX') {
-              answer.isCorrect = value;
-            }
-            if (type === 'INPUT') {
-              answer.description = value;
-            }
-          }
-          return answer;
-        },
-      );
-
-      setQuestions(questionsClone);
+    if (dapAnObj[answerId]) {
+      setDapAnObj((draft) => {
+        if (type === 'CHECKBOX') {
+          draft[answerId].isCorrect = value;
+        }
+        if (type === 'INPUT') {
+          draft[answerId].description = value;
+        }
+      });
     }
   };
 
   const handleSubmitQuestionForQuiz = async () => {
-    //todo
-    if (_.isEmpty(selectedQuiz)) {
-      toast.error('Please choose a Quiz!');
-      return;
-    }
+    console.log('Check state question ', cauHoiObj);
+    console.log('Check state question ', dapAnObj);
 
-    //validate answer
-    let isValidAnswer = true;
-    let indexQ = 0,
-      indexA = 0;
-    for (let i = 0; i < questions.length; i++) {
-      for (let j = 0; j < questions[i].answers.length; j++) {
-        if (!questions[i].answers[j].description) {
-          isValidAnswer = false;
-          indexA = j;
-          break;
-        }
-      }
-      indexQ = i;
-      if (isValidAnswer === false) break;
-    }
-
-    if (isValidAnswer === false) {
-      toast.error(`Not empty Answer ${indexA + 1} at Question ${indexQ + 1}`);
-      return;
-    }
-
-    //validate question
-    let isValidQ = true;
-    let indexQ1 = 0;
-    for (let i = 0; i < questions.length; i++) {
-      if (!questions[i].description) {
-        isValidQ = false;
-        indexQ1 = i;
-        break;
-      }
-    }
-
-    if (isValidQ === false) {
-      toast.error(`Not empty description for Question ${indexQ1 + 1}`);
-      return;
-    }
-
-    let questionsClone = _.cloneDeep(questions);
-    for (let i = 0; i < questionsClone.length; i++) {
-      if (questionsClone[i].imageFile) {
-        questionsClone[i].imageFile = await toBase64(
-          questionsClone[i].imageFile,
-        );
-      }
-    }
-
-    let res = await postUpsertQA({
-      quizId: selectedQuiz.value,
-      questions: questionsClone,
-    });
-
-    if (res && res.EC === 0) {
-      toast.success(res.EM);
-      fetchQuizWithQA();
-    }
+    return;
   };
 
   const toBase64 = (file) =>
@@ -457,7 +413,7 @@ const QuizQA = (props) => {
           );
         })}
 
-        {cauHoiObj && cauHoiObj.length > 0 && (
+        {cauHoiObj && Object.keys(cauHoiObj).length > 0 && (
           <div>
             <button
               onClick={() => handleSubmitQuestionForQuiz()}
