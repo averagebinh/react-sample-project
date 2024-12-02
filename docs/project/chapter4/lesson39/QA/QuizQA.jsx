@@ -18,12 +18,12 @@ import { toast } from 'react-toastify';
 import 'react-awesome-lightbox/build/style.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { normalize, schema } from 'normalizr';
-
+import { useImmer } from 'use-immer';
 const QuizQA = (props) => {
   const cauhoiId = uuidv4();
   const dapAnId = uuidv4();
 
-  const [cauHoiObj, setCauHoiObj] = useState({
+  const [cauHoiObj, setCauHoiObj] = useImmer({
     [cauhoiId]: {
       id: cauhoiId,
       description: '',
@@ -32,7 +32,8 @@ const QuizQA = (props) => {
       answers: [dapAnId],
     },
   });
-  const [dapAnObj, setDapAnObj] = useState({
+
+  const [dapAnObj, setDapAnObj] = useImmer({
     [dapAnId]: {
       id: dapAnId,
       description: '',
@@ -136,26 +137,35 @@ const QuizQA = (props) => {
 
   const handleAddRemoveQuestion = (type, id) => {
     if (type === 'ADD') {
+      let cauhoiId = uuidv4();
+      let dapAnId = uuidv4();
+
       const newQuestion = {
-        id: uuidv4(),
+        id: cauhoiId,
         description: '',
         imageFile: '',
         imageName: '',
-        answers: [
-          {
-            id: uuidv4(),
-            description: '',
-            isCorrect: false,
-          },
-        ],
+        answers: [dapAnId],
       };
 
-      setQuestions([...questions, newQuestion]);
+      let newAnswer = {
+        id: dapAnId,
+        description: '',
+        isCorrect: false,
+      };
+      setCauHoiObj((draft) => {
+        draft[cauhoiId] = newQuestion;
+      });
+      setDapAnObj((draft) => {
+        draft[dapAnId] = newAnswer;
+      });
+      //  setDapAnObj()
+      // setQuestions([...questions, newQuestion]);
     }
     if (type === 'REMOVE') {
-      let questionsClone = _.cloneDeep(questions);
-      questionsClone = questionsClone.filter((item) => item.id !== id);
-      setQuestions(questionsClone);
+      setCauHoiObj((draft) => {
+        delete draft[id];
+      });
     }
   };
 
@@ -183,29 +193,25 @@ const QuizQA = (props) => {
 
   const handleOnChange = (type, questionId, value) => {
     if (type === 'QUESTION') {
-      let questionsClone = _.cloneDeep(questions);
-
-      let index = questionsClone.findIndex((item) => item.id === questionId);
-      if (index > -1) {
-        questionsClone[index].description = value;
-        setQuestions(questionsClone);
+      if (cauHoiObj[questionId]) {
+        setCauHoiObj((draft) => {
+          draft[questionId].description = value;
+        });
       }
     }
   };
 
   const handleOnChangeFileQuestion = (questionId, event) => {
-    let questionsClone = _.cloneDeep(questions);
-
-    let index = questionsClone.findIndex((item) => item.id === questionId);
     if (
-      index > -1 &&
+      cauHoiObj[questionId] &&
       event.target &&
       event.target.files &&
       event.target.files[0]
     ) {
-      questionsClone[index].imageFile = event.target.files[0];
-      questionsClone[index].imageName = event.target.files[0].name;
-      setQuestions(questionsClone);
+      setCauHoiObj((draft) => {
+        draft[questionId].imageFile = event.target.files[0];
+        draft[questionId].imageName = event.target.files[0].name;
+      });
     }
   };
 
@@ -304,12 +310,10 @@ const QuizQA = (props) => {
     });
 
   const handlePreviewImage = (questionId) => {
-    let questionsClone = _.cloneDeep(questions);
-    let index = questionsClone.findIndex((item) => item.id === questionId);
-    if (index > -1) {
+    if (cauHoiObj[questionId]) {
       setDataImagePreview({
-        url: URL.createObjectURL(questionsClone[index].imageFile),
-        title: questionsClone[index].imageName,
+        url: URL.createObjectURL(cauHoiObj[questionId].imageFile),
+        title: cauHoiObj[questionId].imageName,
       });
       setIsPreviewImage(true);
     }
@@ -377,7 +381,7 @@ const QuizQA = (props) => {
                   <span onClick={() => handleAddRemoveQuestion('ADD', '')}>
                     <BsFillPatchPlusFill className='icon-add' />
                   </span>
-                  {questions.length > 1 && (
+                  {Object.keys(cauHoiObj).length > 1 && (
                     <span
                       onClick={() =>
                         handleAddRemoveQuestion('REMOVE', cauHoiObj[keyQ].id)
@@ -453,7 +457,7 @@ const QuizQA = (props) => {
           );
         })}
 
-        {questions && questions.length > 0 && (
+        {cauHoiObj && cauHoiObj.length > 0 && (
           <div>
             <button
               onClick={() => handleSubmitQuestionForQuiz()}
